@@ -12,12 +12,12 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/notes/{userId}")
+@RequestMapping("/api/notes")
 @RequiredArgsConstructor
 public class NoteController {
     private final NoteService noteService;
 
-    @PostMapping
+    @PostMapping("/{userId}")
     public ResponseEntity<NoteDto> create(
             @PathVariable UUID userId,
             @Valid @RequestBody NoteDto noteDto
@@ -40,10 +40,26 @@ public class NoteController {
         return ResponseEntity.ok(noteService.findById(noteId));
     }
 
-    @GetMapping("/user")
+    @GetMapping("/user/{userId}")
     public ResponseEntity<List<NoteDto>> findByUserId(
             @PathVariable UUID userId
     ) {
         return ResponseEntity.ok(noteService.findAllSpecificUserNotes(userId));
+    }
+
+    @PutMapping("/{noteId}")
+    public ResponseEntity<NoteDto> update(
+            @PathVariable UUID noteId,
+            @Valid @RequestBody NoteDto noteDto
+    ) {
+        return ResponseEntity.ok(noteService.update(noteId, noteDto));
+    }
+
+    @DeleteMapping("{noteId}")
+    public ResponseEntity<Void> delete(
+            @PathVariable UUID noteId
+    ) {
+        noteService.delete(noteId);
+        return ResponseEntity.noContent().build();
     }
 }
